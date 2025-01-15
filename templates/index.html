@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="number" name="age" placeholder="Age" required>
+        <input type="number" name="sex" placeholder="Sex" required>
+        <input type="number" name="cp" placeholder="Chest Pain Type" required>
+        <input type="number" name="trestbps" placeholder="Resting Blood Pressure" required>
+        <input type="number" name="chol" placeholder="Cholesterol" required>
+        <input type="number" name="fbs" placeholder="Fasting Blood Sugar" required>
+        <input type="number" name="restecg" placeholder="Resting ECG Results" required>
+        <input type="number" name="thalch" placeholder="Max Heart Rate Achieved" required>
+        <input type="number" name="exang" placeholder="Exercise Induced Angina" required>
+        <input type="text" name="oldpeak" placeholder="ST Depression" required>
+        <button type="submit">Predict</button>
+    </form>
+    
+    {% if result is not None %}
+        <h2>Heart Disease Prediction: {{ result }}</h2>
+    {% endif %}
+    
+</body>
+</html>
