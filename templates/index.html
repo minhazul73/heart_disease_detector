@@ -16,7 +16,7 @@
         </header>
 
         <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
-            <form method="POST" class="space-y-6">
+            <form method="POST" class="space-y-6" id="predictionForm" onsubmit="submitForm(event)">
                 {% csrf_token %}
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-2">
@@ -80,7 +80,7 @@
             </form>
 
             {% if result is not None %}
-            <div class="mt-8 p-6 {% if result == 1 %}bg-red-50{% else %}bg-green-50{% endif %} rounded-lg">
+            <div id="result-section" class="mt-8 p-6 {% if result == 1 %}bg-red-50{% else %}bg-green-50{% endif %} rounded-lg">
                 <h2 class="text-2xl font-bold text-center {% if result == 1 %}text-red-700{% else %}text-green-700{% endif %}">
                     Heart Disease Prediction: 
                     {% if result == 1 %}
@@ -96,6 +96,15 @@
                         Based on the provided information, the risk of heart disease appears to be low. However, always maintain a healthy lifestyle.
                     {% endif %}
                 </p>
+                <div class="flex justify-center mt-6">
+                    <button type="button" onclick="resetForm()" 
+                        class="inline-flex items-center px-8 py-3 bg-emerald-600 text-white font-semibold rounded-lg shadow-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                        </svg>
+                        Test Again
+                    </button>
+                </div>
             </div>
             {% endif %}
         </div>
@@ -104,5 +113,65 @@
             <p>This prediction is based on machine learning models and should not be used as a substitute for professional medical advice.</p>
         </footer>
     </div>
+
+    <script>
+        async function submitForm(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                });
+
+                if (response.ok) {
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Update only the result section
+                    const newResult = doc.getElementById('result-section');
+                    const currentResult = document.getElementById('result-section');
+                    
+                    if (newResult) {
+                        if (currentResult) {
+                            currentResult.replaceWith(newResult);
+                        } else {
+                            document.querySelector('.max-w-3xl').appendChild(newResult);
+                        }
+                    }
+                    
+                    // Scroll to the result
+                    newResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function resetForm() {
+            // Reset all form inputs
+            document.querySelector('form').reset();
+            
+            // Hide the result section if it exists
+            const resultSection = document.getElementById('result-section');
+            if (resultSection) {
+                resultSection.remove();
+            }
+            
+            // Scroll to top of the form
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
 </body>
 </html>
