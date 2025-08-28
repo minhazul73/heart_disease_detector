@@ -5,29 +5,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Heart Disease Predictor</title>
     {% tailwind_css %}
-
 </head>
-<body>
-    <form method="POST">
-        {% csrf_token %}
-        <input type="number" name="age" placeholder="Age" required>
-        <input type="number" name="sex" placeholder="Sex" required>
-        <input type="number" name="cp" placeholder="Chest Pain Type" required>
-        <input type="number" name="trestbps" placeholder="Resting Blood Pressure" required>
-        <input type="number" name="chol" placeholder="Cholesterol" required>
-        <input type="number" name="fbs" placeholder="Fasting Blood Sugar" required>
-        <input type="number" name="restecg" placeholder="Resting ECG Results" required>
-        <input type="number" name="thalch" placeholder="Max Heart Rate Achieved" required>
-        <input type="number" name="exang" placeholder="Exercise Induced Angina" required>
-        <input type="text" name="oldpeak" placeholder="ST Depression" required>
-        <button type="submit">Predict</button>
-    </form>
-    
-    {% if result is not None %}
-        <h2>Heart Disease Prediction: {{ result }}</h2>
-    {% endif %}
-    
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Heart Disease Predictor</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">Enter your medical information below to get a prediction about potential heart disease risk.</p>
+        </header>
+
+        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                        <input type="number" name="age" id="age" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="sex" class="block text-sm font-medium text-gray-700">Sex (0: Female, 1: Male)</label>
+                        <input type="number" name="sex" id="sex" min="0" max="1" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="cp" class="block text-sm font-medium text-gray-700">Chest Pain Type (0-3)</label>
+                        <input type="number" name="cp" id="cp" min="0" max="3" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="trestbps" class="block text-sm font-medium text-gray-700">Resting Blood Pressure (mm Hg)</label>
+                        <input type="number" name="trestbps" id="trestbps" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="chol" class="block text-sm font-medium text-gray-700">Cholesterol (mg/dl)</label>
+                        <input type="number" name="chol" id="chol" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="fbs" class="block text-sm font-medium text-gray-700">Fasting Blood Sugar > 120 mg/dl (1: Yes, 0: No)</label>
+                        <input type="number" name="fbs" id="fbs" min="0" max="1" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="restecg" class="block text-sm font-medium text-gray-700">Resting ECG Results (0-2)</label>
+                        <input type="number" name="restecg" id="restecg" min="0" max="2" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="thalch" class="block text-sm font-medium text-gray-700">Max Heart Rate Achieved</label>
+                        <input type="number" name="thalch" id="thalch" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="exang" class="block text-sm font-medium text-gray-700">Exercise Induced Angina (1: Yes, 0: No)</label>
+                        <input type="number" name="exang" id="exang" min="0" max="1" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="oldpeak" class="block text-sm font-medium text-gray-700">ST Depression</label>
+                        <input type="text" name="oldpeak" id="oldpeak" required
+                            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div class="flex justify-center mt-8">
+                    <button type="submit"
+                        class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200">
+                        Predict Heart Disease Risk
+                    </button>
+                </div>
+            </form>
+
+            {% if result is not None %}
+            <div class="mt-8 p-6 {% if result == 1 %}bg-red-50{% else %}bg-green-50{% endif %} rounded-lg">
+                <h2 class="text-2xl font-bold text-center {% if result == 1 %}text-red-700{% else %}text-green-700{% endif %}">
+                    Heart Disease Prediction: 
+                    {% if result == 1 %}
+                        High Risk
+                    {% else %}
+                        Low Risk
+                    {% endif %}
+                </h2>
+                <p class="mt-2 text-center {% if result == 1 %}text-red-600{% else %}text-green-600{% endif %}">
+                    {% if result == 1 %}
+                        Based on the provided information, there might be a risk of heart disease. Please consult with a healthcare professional.
+                    {% else %}
+                        Based on the provided information, the risk of heart disease appears to be low. However, always maintain a healthy lifestyle.
+                    {% endif %}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <footer class="mt-12 text-center text-gray-600 text-sm">
+            <p>This prediction is based on machine learning models and should not be used as a substitute for professional medical advice.</p>
+        </footer>
+    </div>
 </body>
 </html>
